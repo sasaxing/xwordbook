@@ -213,12 +213,23 @@
         </div>
       </button>
       <div class="word-details hidden">
-        <p class="word-chinese"></p>
-        <p class="word-note"></p>
+        <label class="field word-inline-field">
+          <span>Chinese</span>
+          <input class="word-inline-input word-chinese-input" type="text" maxlength="120">
+        </label>
+        <label class="field word-inline-field">
+          <span>German</span>
+          <input class="word-inline-input word-german-input" type="text" maxlength="120">
+        </label>
+        <label class="field word-inline-field">
+          <span>Note</span>
+          <textarea class="word-inline-input word-note-input" rows="3" maxlength="400" placeholder="Optional note"></textarea>
+        </label>
         <div class="word-meta">
           <span class="word-remembered"></span>
           <span class="word-updated"></span>
         </div>
+        <div class="word-move-actions"></div>
         <div class="word-actions">
           <button class="secondary-button word-edit-button" type="button">Edit</button>
           <button class="danger-button word-delete-button" type="button">Delete</button>

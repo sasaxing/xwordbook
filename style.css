@@ -517,21 +517,33 @@ textarea:focus,
   border-top: 1px solid var(--border);
 }
 
+.word-inline-field {
+  gap: 6px;
+}
+
+.word-inline-field span {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.word-inline-input {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--panel-strong);
+  color: var(--text);
+  padding: 10px 12px;
+}
+
 .word-german {
   font-size: 1rem;
   margin-bottom: 2px;
   word-break: break-word;
 }
 
-.word-chinese,
-.word-note,
 .word-meta {
   color: var(--muted);
   line-height: 1.45;
-}
-
-.word-note-empty {
-  font-style: italic;
 }
 
 .word-level {
@@ -550,6 +562,16 @@ textarea:focus,
   justify-content: space-between;
   gap: 10px;
   font-size: 0.84rem;
+}
+
+.word-move-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.word-move-button {
+  padding: 10px 12px;
 }
 
 .remembered-pill {

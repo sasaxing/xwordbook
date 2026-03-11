@@ -129,6 +129,10 @@ function getCategoryLabel(category) {
   return CATEGORY_CONFIG[category]?.label || "Learning";
 }
 
+function getCategoryPayload(category) {
+  return CATEGORY_CONFIG[category] || CATEGORY_CONFIG.learning;
+}
+
 function getSelectedReviewCategories() {
   return new Set(state.review.selectedCategories);
 }
@@ -218,8 +222,11 @@ function createWordCard(word) {
   const summaryButton = fragment.querySelector(".word-summary-button");
   const details = fragment.querySelector(".word-details");
   const expanded = state.expandedWordId === word.id;
-  const noteNode = fragment.querySelector(".word-note");
+  const chineseInput = fragment.querySelector(".word-chinese-input");
+  const germanInput = fragment.querySelector(".word-german-input");
+  const noteInput = fragment.querySelector(".word-note-input");
   const rememberedNode = fragment.querySelector(".word-remembered");
+  const moveActions = fragment.querySelector(".word-move-actions");
 
   article.classList.toggle("word-card-expanded", expanded);
   summaryButton.setAttribute("aria-expanded", String(expanded));
@@ -228,9 +235,9 @@ function createWordCard(word) {
   const category = getWordCategory(word);
   fragment.querySelector(".word-german").textContent =
     state.listDisplayLanguage === "chinese" ? word.chinese : word.german;
-  fragment.querySelector(".word-chinese").textContent = `Chinese: ${word.chinese}`;
-  noteNode.textContent = word.note || "No note";
-  noteNode.classList.toggle("word-note-empty", !word.note);
+  chineseInput.value = word.chinese;
+  germanInput.value = word.german;
+  noteInput.value = word.note || "";
   fragment.querySelector(".word-level").textContent = getCategoryLabel(category);
   rememberedNode.textContent = getCategoryLabel(category);
   rememberedNode.classList.toggle("remembered-pill", category === "confident");
@@ -239,6 +246,56 @@ function createWordCard(word) {
     state.expandedWordId = state.expandedWordId === word.id ? null : word.id;
     renderWordList();
   });
+
+  const saveInlineChanges = async () => {
+    const nextChinese = chineseInput.value.trim();
+    const nextGerman = germanInput.value.trim();
+    const nextNote = noteInput.value.trim();
+
+    if (!nextChinese || !nextGerman) {
+      chineseInput.value = word.chinese;
+      germanInput.value = word.german;
+      noteInput.value = word.note || "";
+      return;
+    }
+
+    if (
+      nextChinese === word.chinese &&
+      nextGerman === word.german &&
+      nextNote === (word.note || "")
+    ) {
+      return;
+    }
+
+    await saveWord({
+      ...word,
+      chinese: nextChinese,
+      german: nextGerman,
+      note: nextNote,
+    });
+
+    await loadWords();
+  };
+
+  chineseInput.addEventListener("blur", saveInlineChanges);
+  germanInput.addEventListener("blur", saveInlineChanges);
+  noteInput.addEventListener("blur", saveInlineChanges);
+
+  CATEGORY_ORDER.filter((nextCategory) => nextCategory !== category).forEach((nextCategory) => {
+    const moveButton = document.createElement("button");
+    moveButton.type = "button";
+    moveButton.className = "secondary-button word-move-button";
+    moveButton.textContent = `Move to ${getCategoryLabel(nextCategory)}`;
+    moveButton.addEventListener("click", async () => {
+      await saveWord({
+        ...word,
+        ...getCategoryPayload(nextCategory),
+      });
+      await loadWords();
+    });
+    moveActions.appendChild(moveButton);
+  });
+
   fragment.querySelector(".word-edit-button").addEventListener("click", () => openEditForm(word.id));
   fragment.querySelector(".word-delete-button").addEventListener("click", () => handleDeleteWord(word.id));
 
