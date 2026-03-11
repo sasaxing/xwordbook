@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" role="img" aria-label="XWordbook icon">
+  <rect width="192" height="192" rx="42" fill="#F6EFE6"/>
+  <rect x="24" y="24" width="144" height="144" rx="34" fill="#E96B3C"/>
+  <path d="M62 55h68c10.493 0 19 8.507 19 19v44c0 10.493-8.507 19-19 19H62c-10.493 0-19-8.507-19-19V74c0-10.493 8.507-19 19-19Z" fill="#FFF8F0"/>
+  <path d="M67 74h57M67 93h57M67 112h39" stroke="#E96B3C" stroke-linecap="round" stroke-width="10"/>
+  <path d="m116 122 12 12 22-28" fill="none" stroke="#2A7A54" stroke-linecap="round" stroke-linejoin="round" stroke-width="10"/>
+</svg>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#e96b3c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="XWordbook">
+  <title>XWordbook</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./icons/icon-192.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icons/icon-192.svg">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Offline German Vocabulary</p>
+        <h1>XWordbook</h1>
+      </div>
+      <button class="icon-button" id="themeToggle" type="button" aria-label="Toggle color theme">◐</button>
+    </header>
+
+    <main class="main-content">
+      <section class="view view-active" id="view-list" aria-labelledby="list-heading">
+        <div class="panel hero-panel">
+          <div>
+            <p class="panel-label">Notebook</p>
+            <h2 id="list-heading">Your words, always local</h2>
+            <p class="panel-copy">Search, review, and edit vocabulary even when the network disappears.</p>
+          </div>
+          <div class="hero-actions">
+            <button class="primary-button" id="addWordButton" type="button">Add word</button>
+            <button class="secondary-button" id="openReviewButton" type="button">Review</button>
+          </div>
+        </div>
+
+        <div class="panel stats-panel">
+          <div class="stat-card">
+            <span class="stat-label">Total</span>
+            <strong id="statTotal">0</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Remembered</span>
+            <strong id="statRemembered">0</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Unremembered</span>
+            <strong id="statUnremembered">0</strong>
+          </div>
+        </div>
+
+        <div class="panel controls-panel">
+          <label class="field">
+            <span>Search</span>
+            <input id="searchInput" type="search" placeholder="Chinese or German">
+          </label>
+
+          <div class="control-row">
+            <label class="field">
+              <span>Status</span>
+              <select id="filterStatus">
+                <option value="all">All</option>
+                <option value="remembered">Remembered</option>
+                <option value="not-remembered">Not remembered</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>Sort</span>
+              <select id="sortBy">
+                <option value="createdAt-desc">Newest</option>
+                <option value="createdAt-asc">Oldest</option>
+                <option value="level-desc">Level high to low</option>
+                <option value="level-asc">Level low to high</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="utility-row">
+            <button class="secondary-button" id="exportButton" type="button">Export JSON</button>
+            <label class="secondary-button file-button">
+              <input id="importInput" type="file" accept="application/json">
+              Import JSON
+            </label>
+          </div>
+        </div>
+
+        <div class="panel status-panel" id="storageStatus" role="status" aria-live="polite"></div>
+
+        <div class="word-list" id="wordList" aria-live="polite"></div>
+        <div class="panel empty-state hidden" id="emptyState">
+          <h3>No words yet</h3>
+          <p>Add your first vocabulary pair to start building the notebook.</p>
+        </div>
+      </section>
+
+      <section class="view" id="view-form" aria-labelledby="form-heading">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Editor</p>
+              <h2 id="form-heading">Add or update a word</h2>
+            </div>
+            <button class="text-button" id="cancelEditButton" type="button">Back</button>
+          </div>
+
+          <form id="wordForm" novalidate>
+            <input id="wordId" type="hidden">
+
+            <label class="field">
+              <span>Chinese</span>
+              <input id="chineseInput" name="chinese" type="text" maxlength="120" required>
+            </label>
+
+            <label class="field">
+              <span>German</span>
+              <input id="germanInput" name="german" type="text" maxlength="120" required>
+            </label>
+
+            <label class="field">
+              <span>Note</span>
+              <textarea id="noteInput" name="note" rows="4" maxlength="400" placeholder="Optional context or example"></textarea>
+            </label>
+
+            <div class="control-row">
+              <label class="field checkbox-field">
+                <span>Remembered</span>
+                <input id="rememberedInput" name="remembered" type="checkbox">
+              </label>
+
+              <label class="field">
+                <span>Level</span>
+                <input id="levelInput" name="level" type="range" min="1" max="5" step="1" value="3">
+                <strong id="levelValue">3</strong>
+              </label>
+            </div>
+
+            <p class="form-error" id="formError" role="alert"></p>
+
+            <div class="form-actions">
+              <button class="primary-button" type="submit">Save word</button>
+              <button class="secondary-button" id="resetFormButton" type="button">Reset</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="view" id="view-review" aria-labelledby="review-heading">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Flashcards</p>
+              <h2 id="review-heading">Review mode</h2>
+            </div>
+            <button class="text-button" id="closeReviewButton" type="button">Back</button>
+          </div>
+
+          <div class="review-toolbar">
+            <label class="field checkbox-inline">
+              <input id="reviewUnrememberedOnly" type="checkbox">
+              <span>Only unremembered</span>
+            </label>
+            <button class="secondary-button" id="shuffleReviewButton" type="button">Randomize</button>
+          </div>
+
+          <div class="progress-row">
+            <span id="reviewProgressText">0 / 0</span>
+            <div class="progress-track" aria-hidden="true">
+              <div class="progress-fill" id="reviewProgressFill"></div>
+            </div>
+          </div>
+
+          <button class="flashcard" id="flashcardButton" type="button" aria-live="polite">
+            <span class="flashcard-side-label" id="flashcardLabel">Chinese</span>
+            <strong id="flashcardPrimary">No word available</strong>
+            <span id="flashcardSecondary">Add vocabulary and open review again.</span>
+          </button>
+
+          <div class="review-meta" id="reviewMeta"></div>
+
+          <div class="review-actions">
+            <button class="danger-button" id="reviewDontKnowButton" type="button">Don't know</button>
+            <button class="secondary-button" id="reviewMediumButton" type="button">Medium</button>
+            <button class="primary-button" id="reviewKnowButton" type="button">Know it</button>
+          </div>
+
+          <div class="utility-row">
+            <button class="secondary-button" id="revealButton" type="button">Reveal / hide</button>
+            <button class="secondary-button" id="nextReviewButton" type="button">Next word</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="tabbar" aria-label="Primary navigation">
+      <button class="tabbar-button active" type="button" data-view="list">Words</button>
+      <button class="tabbar-button" type="button" data-view="form">Add</button>
+      <button class="tabbar-button" type="button" data-view="review">Review</button>
+    </nav>
+  </div>
+
+  <template id="wordItemTemplate">
+    <article class="panel word-card">
+      <div class="word-card-header">
+        <div>
+          <h3 class="word-german"></h3>
+          <p class="word-chinese"></p>
+        </div>
+        <span class="word-level"></span>
+      </div>
+      <p class="word-note"></p>
+      <div class="word-meta">
+        <span class="word-remembered"></span>
+        <span class="word-updated"></span>
+      </div>
+      <div class="word-actions">
+        <button class="secondary-button word-edit-button" type="button">Edit</button>
+        <button class="danger-button word-delete-button" type="button">Delete</button>
+      </div>
+    </article>
+  </template>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
