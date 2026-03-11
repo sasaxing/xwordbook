@@ -133,6 +133,13 @@ function getCategoryPayload(category) {
   return CATEGORY_CONFIG[category] || CATEGORY_CONFIG.learning;
 }
 
+function serializeWordForExport(word) {
+  return {
+    ...word,
+    category: getWordCategory(word),
+  };
+}
+
 function getSelectedReviewCategories() {
   return new Set(state.review.selectedCategories);
 }
@@ -583,7 +590,8 @@ async function updateWordFromReview(nextState) {
 async function handleExport() {
   try {
     const words = await getAllWords();
-    const blob = new Blob([JSON.stringify(words, null, 2)], { type: "application/json" });
+    const exportWords = words.map(serializeWordForExport);
+    const blob = new Blob([JSON.stringify(exportWords, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const date = new Date().toISOString().slice(0, 10);
     const anchor = document.createElement("a");

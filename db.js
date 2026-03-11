@@ -65,16 +65,29 @@ function requestToPromise(request) {
   });
 }
 
+function getCategoryData(category) {
+  switch (category) {
+    case "needs-review":
+      return { level: 1, remembered: false };
+    case "confident":
+      return { level: 5, remembered: true };
+    case "learning":
+    default:
+      return { level: 3, remembered: false };
+  }
+}
+
 export function createWordRecord(data) {
   const now = new Date().toISOString();
+  const categoryData = typeof data.category === "string" ? getCategoryData(data.category) : {};
 
   return {
     id: data.id || generateId(),
     chinese: data.chinese.trim(),
     german: data.german.trim(),
     note: (data.note || "").trim(),
-    remembered: Boolean(data.remembered),
-    level: clampLevel(data.level),
+    remembered: typeof data.category === "string" ? categoryData.remembered : Boolean(data.remembered),
+    level: typeof data.category === "string" ? categoryData.level : clampLevel(data.level),
     createdAt: data.createdAt || now,
     updatedAt: now,
   };
